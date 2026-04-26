@@ -3,7 +3,7 @@
   "name": "AquaPause",
   "version": "1.7.0",
   "description": "A virtual companion that reminds you to drink water and take breaks.",
-  "permissions": ["storage", "alarms", "idle", "tabs"],
+  "permissions": ["storage", "alarms", "idle", "activeTab"],
   "host_permissions": ["https://zxuhspvxsqegdykokfqd.supabase.co/*"],
   "options_page": "options.html",
   "action": {
