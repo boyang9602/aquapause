@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AquaPause — Settings</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+
+<div class="page-header">
+  <span class="logo">🌿</span>
+  <div>
+    <h1>AquaPause Settings</h1>
+    <p>Manage your companion, track your wellness, and configure reminders</p>
+  </div>
+</div>
+
+<nav class="nav">
+  <button class="nav-btn active" data-tab="dashboard">📊 Dashboard</button>
+  <button class="nav-btn" data-tab="companion">🏪 Store</button>
+  <button class="nav-btn" data-tab="config">⚙️ Configuration</button>
+  <button class="nav-btn" data-tab="history">🏆 History</button>
+  <button class="nav-btn" data-tab="paused">🚫 Paused Sites</button>
+  <button class="nav-btn" data-tab="danger">🗑️ Reset</button>
+</nav>
+
+<div class="content">
+
+  <!-- ── Dashboard ──────────────────────────────────────────────────────── -->
+  <section id="tab-dashboard" class="active">
+    <div class="card" id="dash-companion-card"></div>
+    <div class="card">
+      <div class="card-header">
+        <span class="icon">⏱️</span>
+        <div><h2>Next Reminders</h2><p>Time until your companion needs attention</p></div>
+      </div>
+      <div class="card-body">
+        <div class="timer-row">
+          <div class="timer-chip" id="water-chip">
+            <div class="timer-val" id="water-countdown">—</div>
+            <div class="timer-label">💧 Next water</div>
+          </div>
+          <div class="timer-chip" id="stretch-chip">
+            <div class="timer-val" id="stretch-countdown">—</div>
+            <div class="timer-label">🚶 Next break</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="icon">📈</span>
+        <div><h2>Lifetime Stats</h2><p>Your all-time wellness record</p></div>
+      </div>
+      <div class="card-body">
+        <div class="stat-grid">
+          <div class="stat-box"><div class="stat-val" id="stat-waterings">0</div><div class="stat-label">💧 Total waterings</div></div>
+          <div class="stat-box"><div class="stat-val" id="stat-stretches">0</div><div class="stat-label">🚶 Total breaks</div></div>
+          <div class="stat-box"><div class="stat-val" id="stat-plants">0</div><div class="stat-label">🌸 Plants bloomed</div></div>
+          <div class="stat-box"><div class="stat-val" id="stat-days">0</div><div class="stat-label">📅 Days active</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card sponsor-card">
+      <div class="card-body sponsor-body">
+        <span class="sponsor-heart">❤️</span>
+        <div class="sponsor-text">
+          <strong>Enjoying AquaPause?</strong>
+          <p>It's free and open source. If it's helped you stay hydrated, consider sponsoring to keep it growing!</p>
+        </div>
+        <a class="btn btn-sponsor" href="https://github.com/sponsors/boyang9602" target="_blank">Sponsor</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Companion Store ────────────────────────────────────────────────── -->
+  <section id="tab-companion">
+
+    <!-- Current companion (shown only when one is selected) -->
+    <div class="card" id="current-companion-card" style="display:none;"></div>
+
+    <!-- Store -->
+    <div class="card">
+      <div class="card-header">
+        <span class="icon">🏪</span>
+        <div><h2>Companion Store</h2><p>Browse companions and pick your perfect match</p></div>
+      </div>
+      <div class="card-body">
+        <div id="change-warning" class="warning-box" style="display:none;"></div>
+
+        <!-- Filter bar -->
+        <div class="store-filter-bar">
+          <div class="filter-pills" id="filter-pills">
+            <button class="filter-pill active" data-type="all">All</button>
+          </div>
+          <input type="text" class="store-search" id="store-search" placeholder="Search companions…" />
+        </div>
+
+        <!-- Grid -->
+        <div class="comp-grid" id="store-grid">
+          <div class="store-loading">Loading companions…</div>
+        </div>
+
+        <div style="margin-top:14px;display:flex;align-items:center;gap:10px;">
+          <button class="btn btn-primary" id="select-companion-btn" disabled>Select a companion</button>
+          <span class="store-count" id="store-count"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Configuration ──────────────────────────────────────────────────── -->
+  <section id="tab-config">
+
+    <!-- Companion Size -->
+    <div class="card">
+      <div class="card-header"><span class="icon">📐</span><div><h2>Companion Size</h2><p>How large the companion image appears on web pages</p></div></div>
+      <div class="card-body">
+        <div class="size-presets" id="size-presets"></div>
+        <div class="form-row" style="margin-top:16px;">
+          <label>Custom size <span class="label-sub">(drag for an exact companion image size)</span></label>
+          <div class="range-row">
+            <input type="range" id="size-range" step="2" />
+            <div class="range-badge" id="size-badge">70 px</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Water reminder -->
+    <div class="card">
+      <div class="card-header"><span class="icon">💧</span><div><h2>Water Reminder</h2><p>How often to remind you to drink water</p></div></div>
+      <div class="card-body">
+        <div class="form-row">
+          <label>Interval <span class="label-sub">(minutes between reminders)</span></label>
+          <div class="range-row">
+            <input type="range" id="water-range" step="5" />
+            <div class="range-badge" id="water-badge">60 min</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stretch reminder -->
+    <div class="card">
+      <div class="card-header"><span class="icon">🚶</span><div><h2>Break Reminder</h2><p>How often to remind you to rest and stretch</p></div></div>
+      <div class="card-body">
+        <div class="form-row">
+          <label>Interval <span class="label-sub">(minutes between reminders)</span></label>
+          <div class="range-row">
+            <input type="range" id="stretch-range" step="5" />
+            <div class="range-badge" id="stretch-badge">30 min</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Away threshold -->
+    <div class="card">
+      <div class="card-header"><span class="icon">🌙</span><div><h2>Away Threshold</h2><p>How long you must be idle before timers reset</p></div></div>
+      <div class="card-body">
+        <div class="form-row">
+          <label>Idle time <span class="label-sub">(minutes before away is detected)</span></label>
+          <div class="range-row">
+            <input type="range" id="away-range" step="5" />
+            <div class="range-badge" id="away-badge">15 min</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="save-config-btn">💾 Save Configuration</button>
+      <button class="btn btn-outline" id="reset-config-btn">↩️ Restore Defaults</button>
+    </div>
+  </section>
+
+  <!-- ── History ─────────────────────────────────────────────────────────── -->
+  <section id="tab-history">
+    <div class="card">
+      <div class="card-header"><span class="icon">🏆</span><div><h2>Completed Plants</h2><p>Every plant you've grown to full bloom</p></div></div>
+      <div class="card-body" id="history-body"></div>
+    </div>
+  </section>
+
+  <!-- ── Paused Sites ─────────────────────────────────────────────────────── -->
+  <section id="tab-paused">
+    <div class="card">
+      <div class="card-header"><span class="icon">🚫</span><div><h2>Paused Sites</h2><p>AquaPause is hidden on these websites</p></div></div>
+      <div class="card-body" id="paused-sites-body"></div>
+    </div>
+  </section>
+
+  <!-- ── Danger Zone ─────────────────────────────────────────────────────── -->
+  <section id="tab-danger">
+    <div class="card danger-card">
+      <div class="card-header"><span class="icon">⚠️</span><div><h2>Danger Zone</h2><p>These actions cannot be undone</p></div></div>
+      <div class="card-body">
+        <div class="danger-row">
+          <div class="danger-info"><h3>Reset Stats</h3><p>Zero out total waterings and stretches. Companion and history are kept.</p></div>
+          <button class="btn btn-warn" id="reset-stats-btn">Reset Stats</button>
+        </div>
+        <div class="danger-row">
+          <div class="danger-info"><h3>Reset Everything</h3><p>Wipes all data — companion, stats, history, settings. Returns to fresh install.</p></div>
+          <button class="btn btn-danger" id="reset-all-btn">Reset All</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div id="toast"></div>
+
+<script defer src="shared.js"></script>
+<script defer src="options.js"></script>
+</body>
+</html>

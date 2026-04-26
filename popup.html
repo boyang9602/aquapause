@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+
+  <!-- Companion visual + name — click to open options -->
+  <div id="comp-section"></div>
+
+  <!-- Health bar (always shown when companion exists) -->
+  <div id="health-section"></div>
+
+  <!-- Growth progress (plants only) -->
+  <div id="growth-section"></div>
+
+  <!-- Timers -->
+  <div id="timers-section"></div>
+
+  <div class="divider"></div>
+
+  <!-- Site domain + pause/resume -->
+  <div class="domain-row">
+    <span class="domain-icon">🌐</span>
+    <span class="domain-name" id="domain-name">—</span>
+    <span class="domain-badge" id="domain-badge"></span>
+  </div>
+
+  <div class="actions">
+    <button class="btn-pause" id="pause-btn">…</button>
+  </div>
+
+  <div class="footer">
+    <button class="footer-link footer-full" id="settings-link">⚙️ Settings</button>
+    <a class="footer-link footer-sponsor footer-full" href="https://github.com/sponsors/boyang9602" target="_blank">❤️ Sponsor</a>
+  </div>
+
+  <script defer src="shared.js"></script>
+  <script defer src="popup.js"></script>
+</body>
+</html>
