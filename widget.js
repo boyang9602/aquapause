@@ -25,7 +25,7 @@ function visualSz() { return appState?.visualSize ?? 70; }
 
 function widgetDims() {
   const sz  = visualSz();
-  const dnH = Math.round(sz / 3);
+  const dnH = Math.round(sz / 2);
   const dnW = Math.round(sz * 1.25);
   return {
     sz,
