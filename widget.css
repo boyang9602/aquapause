@@ -87,7 +87,7 @@ html, body {
   flex-shrink: 0;
   overflow: hidden;
   display: flex;
-  align-items: stretch;
+  align-items: flex-start;   /* panels size to content and sit at top; quick-btns use height:100% */
   /* width and height set inline by widget.js */
 }
 
@@ -96,7 +96,7 @@ html, body {
   display: flex;
   gap: 6px;
   width: 100%;
-  height: 50%;
+  /* height set inline by widget.js — content-driven like reminder-panel */
   align-items: stretch;
 }
 .quick-btn {
@@ -105,7 +105,7 @@ html, body {
   padding: 0 4px;
   border: none;
   border-radius: 9px;
-  font-size: 12px;
+  font-size: inherit;    /* set by down-zone inline style (scaledFont) */
   font-weight: 700;
   cursor: pointer;
   color: white;
@@ -123,11 +123,12 @@ html, body {
 .reminder-panel {
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: flex-start; /* pack content tightly — no artificial spacing */
   align-items: center;
+  gap: 6px;                    /* consistent gap between heading and button */
   width: 100%;
-  height: 100%;
-  padding: 3px 8px;
+  height: auto;                /* sizes to content; down-zone's flex-start keeps it at top */
+  padding: 5px 8px;
   background: rgba(255,255,255,.92);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -136,7 +137,7 @@ html, body {
   overflow: hidden;
 }
 .reminder-heading {
-  font-size: 12px;
+  font-size: inherit;          /* scales with down-zone's font-size (scaledFont) */
   font-weight: 700;
   color: #1a252f;
   text-align: center;
@@ -151,7 +152,7 @@ html, body {
   padding: 4px 4px;
   border: none;
   border-radius: 7px;
-  font-size: 12px;
+  font-size: inherit;          /* scales with down-zone's font-size (scaledFont) */
   font-weight: 700;
   cursor: pointer;
   color: white;
@@ -171,8 +172,8 @@ html, body {
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 100%;
-  padding: 3px 8px;
+  height: auto;                /* sizes to content like reminder-panel */
+  padding: 5px 8px;
   background: rgba(255,248,225,.92);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -185,7 +186,7 @@ html, body {
   padding: 3px 10px;
   border: none;
   border-radius: 7px;
-  font-size: 10.5px;
+  font-size: inherit;          /* scales with down-zone's font-size (scaledFont) */
   font-weight: 700;
   background: linear-gradient(135deg, #66bb6a, #2e7d32);
   color: #fff;

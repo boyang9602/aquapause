@@ -17,20 +17,30 @@ let appState        = null;
 let awaitingStretch = false;
 
 // ── Layout constants ──────────────────────────────────────────────────────────
-const WIDGET_PAD = 8;   // px padding around both zones (matches CSS)
-const ZONE_GAP   = 4;   // px gap between up-zone and down-zone (matches CSS)
+const WIDGET_PAD          = 8;   // px padding around both zones (matches CSS)
+const ZONE_GAP            = 4;   // px gap between up-zone and down-zone (matches CSS)
+const QUICK_BTN_THRESHOLD = 55;  // minimum visualSize to show quick-action buttons
 
 // ── Sizing helpers ────────────────────────────────────────────────────────────
 function visualSz() { return appState?.visualSize ?? 70; }
 
+// Font size scales with visualSize, clamped to [10, 16] px.
+// At the default sz=70 this yields 12 px, matching the previous hard-coded value.
+function scaledFont() {
+  return Math.round(Math.min(Math.max(visualSz() * 0.17, 10), 16));
+}
+
 function widgetDims() {
   const sz  = visualSz();
-  const dnH = Math.round(sz / 2);
+  const sf  = scaledFont();
+  // dnH is sized to the tallest content scenario (reminder panel).
+  // Content: 10px padding + ceil(sf×1.3) heading + 6px gap + (sf+8px) button = ceil(sf×2.3) + 24.
+  // Add 6px breathing room → ceil(sf×2.3 + 30).
+  // Because it only depends on sf→sz, it is fully stable for any given visualSize.
+  const dnH = Math.ceil(sf * 2.3 + 30);
   const dnW = Math.round(sz * 1.25);
   return {
-    sz,
-    dnH,
-    dnW,
+    sz, sf, dnH, dnW,
     totalW: dnW + WIDGET_PAD * 2,
     totalH: sz  + ZONE_GAP + dnH + WIDGET_PAD * 2,
   };
@@ -60,7 +70,7 @@ function renderWidget() {
   const def = getCompDef(appState);
   if (!def) return;
 
-  const { sz, dnH, dnW, totalW, totalH } = widgetDims();
+  const { sz, sf, dnH, dnW, totalW, totalH } = widgetDims();
   const visual      = getCompVisual(appState);
   const hasPending  = (appState.pendingWater && !awaitingStretch)
                    || awaitingStretch
@@ -109,7 +119,7 @@ function renderWidget() {
   // ── Down zone (swappable content — fixed size so up-zone stays put) ────────
   const dnZone = document.createElement('div');
   dnZone.className = 'down-zone';
-  dnZone.style.cssText = `width:${dnW}px; height:${dnH}px;`;
+  dnZone.style.cssText = `width:${dnW}px; height:${dnH}px; font-size:${sf}px;`;
 
   if (showWater) {
     const panel = document.createElement('div');
@@ -130,14 +140,18 @@ function renderWidget() {
     bloom.className = 'bloom-banner';
     bloom.innerHTML = `<button class="new-seed-btn" id="new-seed-btn">🌱 Plant new seed</button>`;
     dnZone.appendChild(bloom);
-  } else {
+  } else if (sz >= QUICK_BTN_THRESHOLD) {
     const btns = document.createElement('div');
     btns.className = 'quick-btns';
+    // Height is content-driven (font + padding), same philosophy as reminder-panel.
+    // The remaining dnH space below is transparent — up-zone stays stable.
+    btns.style.height = `${Math.ceil(sf * 2 + 10)}px`;
     btns.innerHTML = `
       <button class="quick-btn water"   id="drink-now-btn">💧 Drink</button>
       <button class="quick-btn stretch" id="move-now-btn">🚶 Move</button>`;
     dnZone.appendChild(btns);
   }
+  // else: sz too small for quick buttons & nothing pending — down-zone stays empty/transparent
 
   widget.appendChild(dnZone);
 
