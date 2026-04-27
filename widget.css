@@ -2,7 +2,7 @@
 Licensed under the PolyForm Strict License 1.0.0 */
 /* =============================================================================
    AquaPause — Widget styles
-   Layout uses two fixed zones: up-zone (visual) and down-zone (actions).
+   Layout uses two fixed zones: up-zone (visual) and down-zone (two timers).
    Both zones have sizes set inline by widget.js based on visualSize.
    The widget total size is also set inline — CSS provides structure only.
    ============================================================================= */
@@ -17,9 +17,6 @@ html, body {
 }
 
 /* ── Widget shell ── */
-/* Width, height are set inline from widgetDims(). Padding = WIDGET_PAD = 8px.
-   Gap = ZONE_GAP = 4px between the two zones.
-   These values MUST match the constants in widget.js. */
 .widget {
   pointer-events: none;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -33,14 +30,13 @@ html, body {
   padding: 8px;      /* = WIDGET_PAD — must match widget.js */
 }
 
-/* ── Up zone (companion visual — never repositioned) ── */
+/* ── Up zone ── */
 .up-zone {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  /* width and height set inline by widget.js */
 }
 
 /* ── Close button ── */
@@ -74,130 +70,96 @@ html, body {
   transition: transform .2s;
   animation: bob 3s ease-in-out infinite;
 }
-.comp-visual-inner img {
-  object-fit: contain;
-}
+.comp-visual-inner img { object-fit: contain; }
 .comp-visual:hover .comp-visual-inner { transform: scale(1.08); }
-.widget.alert .comp-visual-inner { animation: pulse .9s ease-in-out infinite; }
 
-@keyframes bob   { 0%,100%{transform:translateY(0)}  50%{transform:translateY(-4px)} }
-@keyframes pulse { 0%,100%{transform:scale(1)}        50%{transform:scale(1.12)}      }
+@keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
 
-/* ── Down zone (fixed size — content swaps, zone never resizes) ── */
+/* ── Down zone ── */
 .down-zone {
   pointer-events: auto;
   flex-shrink: 0;
-  overflow: hidden;
   display: flex;
-  align-items: flex-start;   /* panels size to content and sit at top; quick-btns use height:100% */
-  /* width and height set inline by widget.js */
-}
-
-/* ── Quick action buttons ── */
-.quick-btns {
-  display: flex;
-  gap: 6px;
-  width: 100%;
-  /* height set inline by widget.js — content-driven like reminder-panel */
   align-items: stretch;
 }
-.quick-btn {
-  flex: 1;
+
+/* ── Timer icon buttons — NO background, just the SVG icon + text ── */
+.timer-btns {
+  display: flex;
+  gap: 16px;   /* generous gap; no box boundaries to define separation */
+  width: 100%;
   height: 100%;
-  padding: 0 4px;
-  border: none;
-  border-radius: 9px;
-  font-size: inherit;    /* set by down-zone inline style (scaledFont) */
-  font-weight: 700;
-  cursor: pointer;
-  color: white;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: transform .1s, box-shadow .15s;
-}
-.quick-btn:active { transform: scale(.95); }
-.quick-btn:hover  { box-shadow: 0 3px 12px rgba(0,0,0,.35); }
-.quick-btn.water   { background: linear-gradient(135deg, #42a5f5, #1565c0); }
-.quick-btn.stretch { background: linear-gradient(135deg, #66bb6a, #2e7d32); }
-
-/* ── Reminder panel ── */
-.reminder-panel {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* pack content tightly — no artificial spacing */
-  align-items: center;
-  gap: 6px;                    /* consistent gap between heading and button */
-  width: 100%;
-  height: auto;                /* sizes to content; down-zone's flex-start keeps it at top */
-  padding: 5px 8px;
-  background: rgba(255,255,255,.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 10px;
-  box-shadow: 0 4px 16px rgba(0,0,0,.18);
-  overflow: hidden;
-}
-.reminder-heading {
-  font-size: inherit;          /* scales with down-zone's font-size (scaledFont) */
-  font-weight: 700;
-  color: #1a252f;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 100%;
-}
-.action-btn {
-  display: block;
-  width: 100%;
-  padding: 4px 4px;
-  border: none;
-  border-radius: 7px;
-  font-size: inherit;          /* scales with down-zone's font-size (scaledFont) */
-  font-weight: 700;
-  cursor: pointer;
-  color: white;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: transform .1s, box-shadow .2s;
-}
-.action-btn:active { transform: scale(.97); }
-.action-btn:hover  { box-shadow: 0 2px 8px rgba(0,0,0,.22); }
-.action-btn.water   { background: linear-gradient(135deg, #42a5f5, #1565c0); }
-.action-btn.stretch { background: linear-gradient(135deg, #66bb6a, #2e7d32); }
-
-/* ── Bloom banner (down-zone variant) ── */
-.bloom-banner {
-  display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: auto;                /* sizes to content like reminder-panel */
-  padding: 5px 8px;
-  background: rgba(255,248,225,.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 10px;
-  box-shadow: 0 3px 12px rgba(255,160,0,.25);
-  overflow: hidden;
 }
-.new-seed-btn {
-  display: inline-block;
-  padding: 3px 10px;
-  border: none;
-  border-radius: 7px;
-  font-size: inherit;          /* scales with down-zone's font-size (scaledFont) */
-  font-weight: 700;
-  background: linear-gradient(135deg, #66bb6a, #2e7d32);
-  color: #fff;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.new-seed-btn:hover { box-shadow: 0 2px 8px rgba(102,187,106,.4); }
 
-/* ── Minimized bubble (unused in current flow but kept for future) ── */
+.timer-btn {
+  flex: 0 0 auto;         /* don't stretch — size is driven by icon */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 6px;
+  background: transparent;      /* ← no container */
+  font-size: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  color: rgba(0,0,0,0.55);      /* dark label, readable on white card */
+  transition: transform .12s, opacity .12s;
+}
+.timer-btn:active  { transform: scale(.92); }
+.timer-btn:hover   { opacity: 0.75; }
+
+/* No gradient fills — glass/battery color comes entirely from the SVG */
+.timer-btn.water   { background: transparent; }
+.timer-btn.stretch { background: transparent; }
+
+/* ── Due state: shake + SVG glow ── */
+/* The button shakes; the SVG inside gets a coloured drop-shadow glow. */
+.timer-btn.due {
+  animation: timer-shake 2.4s ease-in-out infinite;
+}
+
+/* Glow colour matches the icon: blue for water, orange/red for battery */
+.timer-btn.water.due   svg { filter: drop-shadow(0 0 4px rgba(33,150,243,0.7)); }
+.timer-btn.stretch.due svg { filter: drop-shadow(0 0 4px rgba(251,140,0,0.7)); }
+
+@keyframes timer-shake {
+  /* long quiet pause, then two quick rattles */
+  0%, 55%, 100% { transform: translateX(0) rotate(0deg); }
+  57%            { transform: translateX(-3px) rotate(-2deg); }
+  59%            { transform: translateX( 3px) rotate( 2deg); }
+  61%            { transform: translateX(-2.5px) rotate(-1.5deg); }
+  63%            { transform: translateX( 2.5px) rotate( 1.5deg); }
+  65%            { transform: translateX(-1.5px) rotate(-1deg); }
+  67%            { transform: translateX( 1.5px) rotate( 1deg); }
+  69%            { transform: translateX(0) rotate(0deg); }
+  /* second rattle */
+  78%            { transform: translateX(-2px) rotate(-1.5deg); }
+  80%            { transform: translateX( 2px) rotate( 1.5deg); }
+  82%            { transform: translateX(-1px) rotate(-.5deg); }
+  84%            { transform: translateX( 1px) rotate( .5deg); }
+  86%            { transform: translateX(0) rotate(0deg); }
+}
+
+/* ── SVG icon ── */
+.timer-btn svg {
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+/* ── Countdown label ── */
+.timer-val {
+  font-size: 0.85em;
+  line-height: 1;
+  letter-spacing: .01em;
+  color: rgba(0,0,0,0.55);
+}
+
+/* ── Minimized bubble (kept for future use) ── */
 .bubble {
   pointer-events: auto;
   border-radius: 50%;
