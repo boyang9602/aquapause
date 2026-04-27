@@ -1,6 +1,7 @@
 {
   "manifest_version": 3,
   "name": "AquaPause",
+  "license": "PolyForm-Strict-1.0.0",
   "version": "1.7.0",
   "description": "A virtual companion that reminds you to drink water and take breaks.",
   "permissions": ["storage", "alarms", "idle", "activeTab"],

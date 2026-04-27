@@ -1,3 +1,5 @@
+// Copyright 2026 Bo Yang
+// Licensed under the PolyForm Strict License 1.0.0
 // =============================================================================
 // AquaPause — Shared utilities
 // Loaded by widget.html, options.html, and popup.html via defer.

@@ -1,3 +1,5 @@
+// Copyright 2026 Bo Yang
+// Licensed under the PolyForm Strict License 1.0.0
 // =============================================================================
 // AquaPause — Toolbar popup
 // Depends on shared.js. Shows companion details (health, growth, timers)

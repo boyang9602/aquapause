@@ -1,3 +1,5 @@
+// Copyright 2026 Bo Yang
+// Licensed under the PolyForm Strict License 1.0.0
 // =============================================================================
 // AquaPause — Options page logic
 // Depends on shared.js (loaded first via defer in options.html).

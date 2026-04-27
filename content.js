@@ -1,3 +1,5 @@
+// Copyright 2026 Bo Yang
+// Licensed under the PolyForm Strict License 1.0.0
 // =============================================================================
 // AquaPause — Content Script
 // Injects the widget iframe only on non-paused sites.

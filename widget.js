@@ -1,3 +1,5 @@
+// Copyright 2026 Bo Yang
+// Licensed under the PolyForm Strict License 1.0.0
 // =============================================================================
 // AquaPause — Widget logic
 // Depends on shared.js. Uses state.companion directly (full API def stored there).
