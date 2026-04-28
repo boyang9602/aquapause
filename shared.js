@@ -12,7 +12,7 @@
 // Default reminder intervals
 const WATER_INTERVAL_DEFAULT_MS   = 60 * 60 * 1000;    // 1 hour
 const STRETCH_INTERVAL_DEFAULT_MS = 30 * 60 * 1000;    // 30 minutes
-const AWAY_THRESHOLD_DEFAULT_MS   = 15 * 60 * 1000;    // 15 minutes
+const AWAY_THRESHOLD_DEFAULT_MS   = 30 * 60 * 1000;    // 30 minutes
 const MIN_INTERVAL_MS             =  5 * 60 * 1000;    // shortest allowed interval
 
 // Slider bounds (minutes) — single source of truth for both options.html and
@@ -21,8 +21,8 @@ const WATER_INTERVAL_MIN_MIN      =   5;
 const WATER_INTERVAL_MAX_MIN      = 120;
 const STRETCH_INTERVAL_MIN_MIN    =   5;
 const STRETCH_INTERVAL_MAX_MIN    =  90;
-const AWAY_THRESHOLD_MIN_MIN      =   5;
-const AWAY_THRESHOLD_MAX_MIN      =  60;
+const AWAY_THRESHOLD_MIN_MIN      =  15;
+const AWAY_THRESHOLD_MAX_MIN      =  90;
 
 // Companion visual size (px)
 const VISUAL_SIZE_DEFAULT         = 140;

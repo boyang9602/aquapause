@@ -112,7 +112,7 @@ function renderStoreGrid() {
     const isSelected = pickId === c.id;
 
     // Use the first stage image as the store preview
-    const firstStage = (c.stages ?? [])[0];
+    const firstStage = (c.stages ?? []).at(-1);
     const previewUrl = firstStage?.image_url ?? null;
 
     const card = document.createElement('div');
