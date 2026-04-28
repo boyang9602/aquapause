@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "AquaPause",
-  "license": "PolyForm-Strict-1.0.0",
-  "version": "1.7.0",
+  "homepage_url": "https://github.com/boyang9602/aquapause",
+  "version": "1.7.1",
   "description": "A virtual companion that reminds you to drink water and take breaks.",
   "permissions": ["storage", "alarms", "idle", "activeTab"],
   "host_permissions": ["https://zxuhspvxsqegdykokfqd.supabase.co/*"],
