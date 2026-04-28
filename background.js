@@ -70,6 +70,10 @@ const DEFAULT_STATE = {
 
   // Sites where the widget is paused (array of hostname strings)
   pausedDomains:      [],
+
+  // Timestamp (ms) of when the screen was locked; null if not locked.
+  // Away is only declared once the lock duration exceeds awayThresholdMs.
+  lockedAt:           null,
 };
 
 function getState() {
@@ -82,9 +86,19 @@ function setState(updates) {
 // ── Timer check (called by 1-min alarm) ──────────────────────────────────────
 async function checkTimers() {
   const state = await getState();
-  if (!state.initialized || !state.companion || state.isAway) return;
+  if (!state.initialized || !state.companion) return;
 
-  const now               = Date.now();
+  const now             = Date.now();
+  const awayThresholdMs = state.awayThresholdMs ?? AWAY_THRESHOLD_DEFAULT_MS;
+
+  // Promote a pending lock to "away" once the threshold has been exceeded.
+  if (!state.isAway && state.lockedAt !== null &&
+      now - state.lockedAt >= awayThresholdMs) {
+    await handleBecameAway();
+    return;   // skip reminder logic — user is now away
+  }
+
+  if (state.isAway) return;
   const waterIntervalMs   = state.waterIntervalMs   ?? WATER_INTERVAL_DEFAULT_MS;
   const stretchIntervalMs = state.stretchIntervalMs ?? STRETCH_INTERVAL_DEFAULT_MS;
   const updates           = {};
@@ -112,6 +126,7 @@ async function handleBecameAway() {
   const now = Date.now();
   await setState({
     isAway:          true,
+    lockedAt:        null,   // lock resolved — away is now the authoritative state
     lastWaterTime:   now,
     lastStretchTime: now,
     pendingWater:    false,
@@ -119,16 +134,30 @@ async function handleBecameAway() {
   });
 }
 
+// Called when the screen is locked.  We record the lock time but do NOT mark
+// the user as away yet — checkTimers() will promote to away once the lock has
+// lasted longer than awayThresholdMs (so a quick toilet break stays "active").
+async function handleBecameLocked() {
+  const state = await getState();
+  // If already away or already tracking a lock, do nothing.
+  if (state.isAway || state.lockedAt !== null) return;
+  await setState({ lockedAt: Date.now() });
+}
+
 async function handleBecameActive() {
   const now = Date.now();
-  await setState({
-    isAway:          false,
-    lastWaterTime:   now,
-    lastStretchTime: now,
-    lastActiveTime:  now,
-    pendingWater:    false,
-    pendingStretch:  false,
-  });
+  const oldState = await getState();
+  if (oldState.isAway) {
+    await setState({
+      isAway:          false,
+      lockedAt:        null,   // clear any pending lock timer
+      lastWaterTime:   now,
+      lastStretchTime: now,
+      lastActiveTime:  now,
+      pendingWater:    false,
+      pendingStretch:  false,
+    });
+  }
 }
 
 // ── Action handlers ───────────────────────────────────────────────────────────
@@ -364,8 +393,14 @@ chrome.alarms.onAlarm.addListener(alarm => {
 
 // ── chrome.idle: authoritative source of away/active state ───────────────────
 chrome.idle.onStateChanged.addListener(async (newState) => {
-  if (newState === 'idle' || newState === 'locked') {
+  if (newState === 'idle') {
+    // idle threshold is already enforced by chrome via setDetectionInterval,
+    // so we can go straight to away.
     await handleBecameAway();
+  } else if (newState === 'locked') {
+    // Don't go away immediately — start the lock timer and let checkTimers()
+    // decide once awayThresholdMs has elapsed.
+    await handleBecameLocked();
   } else if (newState === 'active') {
     await handleBecameActive();
   }
@@ -380,8 +415,12 @@ async function queryIdleStateOnStartup() {
   const sec   = Math.round((state.awayThresholdMs ?? AWAY_THRESHOLD_DEFAULT_MS) / MS_PER_SECOND);
   armIdleDetection(sec);
   chrome.idle.queryState(sec, async (currentState) => {
-    if (currentState === 'idle' || currentState === 'locked') {
+    if (currentState === 'idle') {
       await handleBecameAway();
+    } else if (currentState === 'locked') {
+      // Treat an already-locked screen at startup the same as receiving a
+      // 'locked' event — start the timer; checkTimers() will promote to away.
+      await handleBecameLocked();
     } else {
       if (state.isAway) await handleBecameActive();
     }
