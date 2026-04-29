@@ -117,32 +117,21 @@ html, body {
 .timer-btn.water   { background: transparent; }
 .timer-btn.stretch { background: transparent; }
 
-/* ── Due state: shake + SVG glow ── */
-/* The button shakes; the SVG inside gets a coloured drop-shadow glow. */
-.timer-btn.due {
-  animation: timer-shake 2.4s ease-in-out infinite;
+/* ── Due state: flashing contour glow ── */
+/* The SVG outline pulses with a coloured drop-shadow that traces the icon shape. */
+.timer-btn.water.due   svg { animation: water-flash   1.4s ease-in-out infinite; }
+.timer-btn.stretch.due svg { animation: stretch-flash  1.4s ease-in-out infinite; }
+
+@keyframes water-flash {
+  0%, 100% { filter: drop-shadow(0 0 0px  rgba(33,150,243,0.0)); }
+  50%      { filter: drop-shadow(0 0 5px  rgba(33,150,243,1.0))
+                     drop-shadow(0 0 10px rgba(33,150,243,0.5)); }
 }
 
-/* Glow colour matches the icon: blue for water, orange/red for battery */
-.timer-btn.water.due   svg { filter: drop-shadow(0 0 4px rgba(33,150,243,0.7)); }
-.timer-btn.stretch.due svg { filter: drop-shadow(0 0 4px rgba(251,140,0,0.7)); }
-
-@keyframes timer-shake {
-  /* long quiet pause, then two quick rattles */
-  0%, 55%, 100% { transform: translateX(0) rotate(0deg); }
-  57%            { transform: translateX(-3px) rotate(-2deg); }
-  59%            { transform: translateX( 3px) rotate( 2deg); }
-  61%            { transform: translateX(-2.5px) rotate(-1.5deg); }
-  63%            { transform: translateX( 2.5px) rotate( 1.5deg); }
-  65%            { transform: translateX(-1.5px) rotate(-1deg); }
-  67%            { transform: translateX( 1.5px) rotate( 1deg); }
-  69%            { transform: translateX(0) rotate(0deg); }
-  /* second rattle */
-  78%            { transform: translateX(-2px) rotate(-1.5deg); }
-  80%            { transform: translateX( 2px) rotate( 1.5deg); }
-  82%            { transform: translateX(-1px) rotate(-.5deg); }
-  84%            { transform: translateX( 1px) rotate( .5deg); }
-  86%            { transform: translateX(0) rotate(0deg); }
+@keyframes stretch-flash {
+  0%, 100% { filter: drop-shadow(0 0 0px  rgba(229,57,53,0.0)); }
+  50%      { filter: drop-shadow(0 0 5px  rgba(229,57,53,1.0))
+                     drop-shadow(0 0 10px rgba(229,57,53,0.5)); }
 }
 
 /* ── SVG icon ── */
