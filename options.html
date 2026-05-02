@@ -115,6 +115,35 @@ Licensed under the PolyForm Strict License 1.0.0 -->
   <!-- ── Configuration ──────────────────────────────────────────────────── -->
   <section id="tab-config">
 
+    <!-- Reminder Mode -->
+    <div class="card">
+      <div class="card-header"><span class="icon">🔔</span><div><h2>Reminder Mode</h2><p>How your companion alerts you when a reminder is due</p></div></div>
+      <div class="card-body">
+        <div class="mode-options" id="mode-options">
+          <label class="mode-option" id="mode-opt-1">
+            <input type="radio" name="reminderMode" value="1" />
+            <div class="mode-option-body">
+              <div class="mode-option-icon">🔦</div>
+              <div class="mode-option-text">
+                <div class="mode-option-title">Subtle — Flash icons</div>
+                <div class="mode-option-desc">The water and break icons glow in the corner widget. Easy to ignore when focused.</div>
+              </div>
+            </div>
+          </label>
+          <label class="mode-option" id="mode-opt-2">
+            <input type="radio" name="reminderMode" value="2" />
+            <div class="mode-option-body">
+              <div class="mode-option-icon">📢</div>
+              <div class="mode-option-text">
+                <div class="mode-option-title">Intrusive — Centre pop-up</div>
+                <div class="mode-option-desc">Your companion scales up and appears in the middle of the screen with a reminder message until you act.</div>
+              </div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+
     <!-- Companion Size -->
     <div class="card">
       <div class="card-header"><span class="icon">📐</span><div><h2>Companion Size</h2><p>How large the companion image appears on web pages</p></div></div>
@@ -189,7 +218,7 @@ Licensed under the PolyForm Strict License 1.0.0 -->
   <!-- ── Paused Sites ─────────────────────────────────────────────────────── -->
   <section id="tab-paused">
     <div class="card">
-      <div class="card-header"><span class="icon">🚫</span><div><h2>Paused Sites</h2><p>AquaPause is hidden on these websites</p></div></div>
+      <div class="card-header"><span class="icon">🚫</span><div><h2>Paused Sites</h2><p>AquaPause is disabled on these websites</p></div></div>
       <div class="card-body" id="paused-sites-body"></div>
     </div>
   </section>

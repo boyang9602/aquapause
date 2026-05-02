@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "AquaPause",
+  "name": "Aqua Pause",
   "homepage_url": "https://github.com/boyang9602/aquapause",
   "version": "1.7.1",
   "description": "A virtual companion that reminds you to drink water and take breaks.",
@@ -15,7 +15,7 @@
       "128": "images/icon128.png"
     },
     "default_popup": "popup.html",
-    "default_title": "AquaPause"
+    "default_title": "Aqua Pause"
   },
   "web_accessible_resources": [
     {

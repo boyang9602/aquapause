@@ -83,12 +83,55 @@
     const initW = Math.max(Math.round(visualSize * 1.25), 110) + 8;
     setIframeSize(initW, 180);
 
+    // Track whether the iframe is currently in centred (intrusive) mode so we
+    // can revert the style block cleanly on dismiss.
+    let isCentred = false;
+
+    function setCentred(w, h) {
+      if (!iframe?.style) return;
+      iframe.style.width  = w + 'px';
+      iframe.style.height = h + 'px';
+      iframe.style.setProperty('bottom',    'auto',                               'important');
+      iframe.style.setProperty('right',     'auto',                               'important');
+      iframe.style.setProperty('top',       '50%',                                'important');
+      iframe.style.setProperty('left',      '50%',                                'important');
+      iframe.style.setProperty('transform', 'translate(-50%, -50%) translateZ(0)','important');
+      isCentred = true;
+    }
+
+    function setCorner() {
+      if (!iframe?.style) return;
+      iframe.style.removeProperty('bottom');
+      iframe.style.removeProperty('right');
+      iframe.style.removeProperty('top');
+      iframe.style.removeProperty('left');
+      iframe.style.removeProperty('transform');
+      isCentred = false;
+    }
+
     window.addEventListener('message', e => {
-      if (e.data?.type === 'AQUAPAUSE_RESIZE') setIframeSize(e.data.width || initW, e.data.height || 180);
-      if (e.data?.type === 'AQUAPAUSE_PONG')   missedPings = 0;
+      if (e.data?.type === 'AQUAPAUSE_RESIZE') {
+        const w = e.data.width  || initW;
+        const h = e.data.height || 180;
+        if (e.data.centre) {
+          setCentred(w, h);
+        } else {
+          if (isCentred) setCorner();
+          setIframeSize(w, h);
+        }
+      }
+      if (e.data?.type === 'AQUAPAUSE_PONG') missedPings = 0;
       if (e.data?.type === 'AQUAPAUSE_CLOSE') {
         sendMsg({ type: 'PAUSE_SITE', hostname: currentHostname });
         eject();
+      }
+      if (e.data?.type === 'AQUAPAUSE_INTRUSIVE_DISMISS') {
+        setCorner();
+        // Restore the normal widget size (widget.js will call notifySize on its
+        // own re-render, but snapping the size immediately avoids a flash).
+        setIframeSize(initW, 180);
+        // Tell the widget iframe it can now render the normal corner widget.
+        try { iframe?.contentWindow?.postMessage({ type: 'AQUAPAUSE_INTRUSIVE_DISMISSED' }, '*'); } catch {}
       }
     }, { signal: sig });
 

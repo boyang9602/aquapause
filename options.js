@@ -335,7 +335,8 @@ function renderConfig() {
   const waterMin   = Math.round((appState.waterIntervalMs   ?? WATER_INTERVAL_DEFAULT_MS)  / 60000);
   const stretchMin = Math.round((appState.stretchIntervalMs ?? STRETCH_INTERVAL_DEFAULT_MS) / 60000);
   const awayMin    = Math.round((appState.awayThresholdMs   ?? AWAY_THRESHOLD_DEFAULT_MS)   / 60000);
-  const visualPx   = appState.visualSize ?? VISUAL_SIZE_DEFAULT;
+  const visualPx   = appState.visualSize    ?? VISUAL_SIZE_DEFAULT;
+  const mode       = appState.reminderMode  ?? REMINDER_MODE_DEFAULT;
 
   // Set slider bounds from shared constants (single source of truth)
   const waterRange   = document.getElementById('water-range');
@@ -362,6 +363,10 @@ function renderConfig() {
   document.querySelectorAll('.size-preset-btn').forEach(btn => {
     btn.classList.toggle('active', parseInt(btn.dataset.size) === visualPx);
   });
+
+  // Set reminder mode radio
+  const modeRadio = document.querySelector(`input[name="reminderMode"][value="${mode}"]`);
+  if (modeRadio) modeRadio.checked = true;
 }
 
 // ── History ───────────────────────────────────────────────────────────────────
@@ -504,12 +509,15 @@ document.getElementById('save-config-btn').addEventListener('click', async () =>
   const stretchMin = parseInt(document.getElementById('stretch-range').value, 10);
   const awayMin    = parseInt(document.getElementById('away-range').value,    10);
   const visualPx   = parseInt(document.getElementById('size-range').value,   10);
+  const modeRadio  = document.querySelector('input[name="reminderMode"]:checked');
+  const mode       = modeRadio ? parseInt(modeRadio.value, 10) : REMINDER_MODE_DEFAULT;
   const res = await sendMsg({
     type:              'SAVE_CONFIG',
     waterIntervalMs:   waterMin   * 60000,
     stretchIntervalMs: stretchMin * 60000,
     awayThresholdMs:   awayMin    * 60000,
     visualSize:        visualPx,
+    reminderMode:      mode,
   });
   if (res) { appState = res.state; renderAll(); toast('✅ Saved!'); }
 });
@@ -521,6 +529,7 @@ document.getElementById('reset-config-btn').addEventListener('click', async () =
     stretchIntervalMs: STRETCH_INTERVAL_DEFAULT_MS,
     awayThresholdMs:   AWAY_THRESHOLD_DEFAULT_MS,
     visualSize:        VISUAL_SIZE_DEFAULT,
+    reminderMode:      REMINDER_MODE_DEFAULT,
   });
   if (res) { appState = res.state; renderConfig(); toast('↩️ Defaults restored.'); }
 });

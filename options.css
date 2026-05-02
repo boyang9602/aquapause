@@ -295,7 +295,52 @@ input[type=range] { flex: 1; height: 5px; accent-color: var(--green); cursor: po
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 
-/* ── Sponsor card ── */
+/* ── Reminder mode selector ── */
+.mode-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mode-option {
+  display: block;
+  cursor: pointer;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  transition: border-color .15s, background .15s;
+  background: var(--bg);
+}
+.mode-option:hover { border-color: #bbb; background: #f2f5f7; }
+
+/* Hide the native radio — selection indicated by border/background only */
+.mode-option input[type=radio] { display: none; }
+
+.mode-option:has(input:checked) {
+  border-color: var(--green);
+  background: #e8f5ee;
+}
+
+.mode-option-body {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.mode-option-icon { font-size: 26px; flex-shrink: 0; line-height: 1; }
+.mode-option-text { flex: 1; }
+.mode-option-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.mode-option-desc {
+  font-size: 12px;
+  color: var(--text-sub);
+  line-height: 1.45;
+}
+
+/* Sponsor card ── */
 .sponsor-card { border-color: #fce4ec; background: #fff5f8; }
 .sponsor-body {
   display: flex; align-items: center; gap: 14px;

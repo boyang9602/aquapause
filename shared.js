@@ -11,7 +11,7 @@
 
 // Default reminder intervals
 const WATER_INTERVAL_DEFAULT_MS   = 60 * 60 * 1000;    // 1 hour
-const STRETCH_INTERVAL_DEFAULT_MS = 30 * 60 * 1000;    // 30 minutes
+const STRETCH_INTERVAL_DEFAULT_MS = 60 * 60 * 1000;    // 30 minutes
 const AWAY_THRESHOLD_DEFAULT_MS   = 30 * 60 * 1000;    // 30 minutes
 const MIN_INTERVAL_MS             =  5 * 60 * 1000;    // shortest allowed interval
 
@@ -20,7 +20,7 @@ const MIN_INTERVAL_MS             =  5 * 60 * 1000;    // shortest allowed inter
 const WATER_INTERVAL_MIN_MIN      =   5;
 const WATER_INTERVAL_MAX_MIN      = 120;
 const STRETCH_INTERVAL_MIN_MIN    =   5;
-const STRETCH_INTERVAL_MAX_MIN    =  90;
+const STRETCH_INTERVAL_MAX_MIN    = 120;
 const AWAY_THRESHOLD_MIN_MIN      =  15;
 const AWAY_THRESHOLD_MAX_MIN      =  90;
 
@@ -28,6 +28,9 @@ const AWAY_THRESHOLD_MAX_MIN      =  90;
 const VISUAL_SIZE_DEFAULT         = 140;
 const VISUAL_SIZE_MIN             =  50;
 const VISUAL_SIZE_MAX             = 250;
+
+// Reminder style mode (1 = subtle flash, 2 = intrusive centre pop-up)
+const REMINDER_MODE_DEFAULT = 1;
 
 // Named size presets rendered as quick-pick buttons in the options page
 const VISUAL_SIZE_PRESETS = [

@@ -65,6 +65,9 @@ const DEFAULT_STATE = {
   // Companion visual size (px). Widget width/height are derived automatically.
   visualSize:         VISUAL_SIZE_DEFAULT,
 
+  // Reminder mode: 1 = subtle flash, 2 = intrusive centre pop-up
+  reminderMode:       REMINDER_MODE_DEFAULT,
+
   // History of completed (bloomed) plants
   history:            [],
 
@@ -290,7 +293,7 @@ async function handleRenameCompanion({ nickname }) {
   await setState({ companion: { ...state.companion, nickname: trimmed } });
 }
 
-async function handleSaveConfig({ waterIntervalMs, stretchIntervalMs, awayThresholdMs, visualSize }) {
+async function handleSaveConfig({ waterIntervalMs, stretchIntervalMs, awayThresholdMs, visualSize, reminderMode }) {
   const updates = {};
   if (Number.isFinite(waterIntervalMs)   && waterIntervalMs   >= MIN_INTERVAL_MS)
     updates.waterIntervalMs   = waterIntervalMs;
@@ -302,6 +305,8 @@ async function handleSaveConfig({ waterIntervalMs, stretchIntervalMs, awayThresh
   }
   if (Number.isFinite(visualSize) && visualSize >= VISUAL_SIZE_MIN && visualSize <= VISUAL_SIZE_MAX)
     updates.visualSize = visualSize;
+  if (reminderMode === 1 || reminderMode === 2)
+    updates.reminderMode = reminderMode;
 
   if (Object.keys(updates).length) {
     const now = Date.now();

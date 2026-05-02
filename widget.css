@@ -148,6 +148,111 @@ html, body {
   color: rgba(0,0,0,0.55);
 }
 
+/* ── Intrusive overlay ── */
+/* Rendered when reminderMode === 2 and a reminder is due.
+   Content.js listens for AQUAPAUSE_INTRUSIVE_SHOW to centre the iframe. */
+.widget.intrusive {
+  background: transparent;
+  border-radius: 20px;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  animation: intrusive-enter 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes intrusive-enter {
+  from { opacity: 0; transform: scale(0.86) translateY(12px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+
+
+/* Companion visual area */
+.intrusive-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 26px;
+  pointer-events: none;
+}
+
+/* Pulsing bounce on the companion image */
+@keyframes intrusive-pulse {
+  0%, 100% { transform: scale(1)    translateY(0);   }
+  50%       { transform: scale(1.07) translateY(-5px); }
+}
+
+/* Messages */
+.intrusive-msgs {
+  padding: 14px 20px 6px;
+  text-align: center;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 14px;
+  margin: 0 14px;
+  width: calc(100% - 28px);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.intrusive-msg {
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: #1a252f;
+  margin-bottom: 7px;
+}
+.intrusive-msg:last-child { margin-bottom: 0; }
+
+/* Divider between two messages */
+.intrusive-msg + .intrusive-msg {
+  padding-top: 7px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* Action buttons */
+.intrusive-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 18px 20px;
+  width: 100%;
+  pointer-events: auto;
+}
+
+.intrusive-action-btn {
+  width: 100%;
+  padding: 11px 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform .12s, box-shadow .15s, opacity .15s;
+}
+.intrusive-action-btn:active   { transform: scale(0.96); }
+.intrusive-action-btn:disabled { opacity: 0.55; cursor: default; }
+
+.intrusive-action-btn.water {
+  background: linear-gradient(135deg, #42a5f5, #1565c0);
+  color: #fff;
+}
+.intrusive-action-btn.water:hover:not(:disabled) {
+  box-shadow: 0 4px 14px rgba(33,150,243,0.45);
+}
+
+.intrusive-action-btn.stretch {
+  background: linear-gradient(135deg, #ef5350, #b71c1c);
+  color: #fff;
+}
+.intrusive-action-btn.stretch:hover:not(:disabled) {
+  box-shadow: 0 4px 14px rgba(229,57,53,0.45);
+}
+
 /* ── Minimized bubble (kept for future use) ── */
 .bubble {
   pointer-events: auto;

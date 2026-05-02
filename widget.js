@@ -212,9 +212,110 @@ function render() {
   document.body.innerHTML = '';
   if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
   if (!appState?.companion) { notifySize(); return; }
+
+  // Intrusive mode: show centred pop-up overlay when a reminder is due
+  if (isIntrusiveMode() && intrusiveDue()) {
+    renderIntrusive();
+    return;
+  }
+
   renderWidget();
   startCountdownTimer();
   notifySize();
+}
+
+// ── Intrusive mode ────────────────────────────────────────────────────────────
+const INTRUSIVE_W = 320;   // fixed overlay width in px
+
+function isIntrusiveMode() {
+  return (appState?.reminderMode ?? REMINDER_MODE_DEFAULT) === 2;
+}
+
+function intrusiveDue() {
+  return !!(appState?.pendingWater || appState?.pendingStretch);
+}
+
+/**
+ * Intrusive overlay: centres on screen, shows companion + reminder messages +
+ * action buttons. Sent to content.js as AQUAPAUSE_INTRUSIVE_SHOW so it can
+ * resize/reposition the host iframe.
+ */
+function renderIntrusive() {
+  document.body.innerHTML = '';
+  if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
+
+  const def    = getCompDef(appState);
+  const visual = getCompVisual(appState);
+  const imgSz  = 130;
+
+  // Build message list (only pending reminders)
+  const msgs = [];
+  if (appState.pendingWater)   msgs.push({ key: 'water',   text: getWaterMessage(appState) });
+  if (appState.pendingStretch) msgs.push({ key: 'stretch',  text: getMoveMessage(appState) });
+
+  const INTRUSIVE_H = 200 + imgSz + msgs.length * 60;  // adaptive height
+
+  // Tell content.js to resize + centre the iframe
+  window.parent.postMessage(
+    { type: 'AQUAPAUSE_RESIZE', width: INTRUSIVE_W, height: INTRUSIVE_H, centre: true },
+    '*'
+  );
+
+  const widget = document.createElement('div');
+  widget.className = 'widget intrusive';
+  widget.style.cssText = `width:${INTRUSIVE_W}px; min-height:${INTRUSIVE_H}px; position:relative;`;
+
+  // Companion image with pulsing animation
+  const visualWrap = document.createElement('div');
+  visualWrap.className = 'intrusive-visual';
+  const imgEl = buildVisualEl(visual, imgSz);
+  if (imgEl) {
+    imgEl.style.animation = 'intrusive-pulse 1.8s ease-in-out infinite';
+    visualWrap.appendChild(imgEl);
+  }
+  // Click companion → open settings
+  visualWrap.style.cursor = 'pointer';
+  visualWrap.addEventListener('mousedown', () => chrome.runtime.openOptionsPage());
+  widget.appendChild(visualWrap);
+
+  // Reminder messages
+  const msgsDiv = document.createElement('div');
+  msgsDiv.className = 'intrusive-msgs';
+  msgs.forEach(m => {
+    const p = document.createElement('p');
+    p.className   = 'intrusive-msg';
+    p.textContent = m.text;
+    msgsDiv.appendChild(p);
+  });
+  widget.appendChild(msgsDiv);
+
+  // Action buttons — one per pending reminder
+  const actionsDiv = document.createElement('div');
+  actionsDiv.className = 'intrusive-actions';
+
+  msgs.forEach(m => {
+    const btn = document.createElement('button');
+    btn.className = `intrusive-action-btn ${m.key}`;
+    btn.textContent = m.key === 'water' ? '💧 Done — I drank water!' : '🚶 Done — I took a break!';
+    btn.addEventListener('mousedown', async () => {
+      btn.disabled = true;
+      const msgType = m.key === 'water' ? 'WATER_DONE' : 'STRETCH_DONE';
+      const res = await sendMsg({ type: msgType });
+      if (res) {
+        appState = res.state;
+        // If no more pending reminders, revert to normal widget
+        if (!intrusiveDue()) {
+          window.parent.postMessage({ type: 'AQUAPAUSE_INTRUSIVE_DISMISS' }, '*');
+        } else {
+          render();
+        }
+      }
+    });
+    actionsDiv.appendChild(btn);
+  });
+
+  widget.appendChild(actionsDiv);
+  document.body.appendChild(widget);
 }
 
 // ── Full widget ───────────────────────────────────────────────────────────────
@@ -240,7 +341,7 @@ function renderWidget() {
   closeBtn.className   = 'close-btn';
   closeBtn.title       = 'Close & pause on this site';
   closeBtn.textContent = '✕';
-  closeBtn.addEventListener('click', e => {
+  closeBtn.addEventListener('mousedown', e => {
     e.stopPropagation();
     window.parent.postMessage({ type: 'AQUAPAUSE_CLOSE' }, '*');
   });
@@ -254,7 +355,7 @@ function renderWidget() {
   const imgEl = buildVisualEl(visual, sz - 4);
   if (imgEl) visualInner.appendChild(imgEl);
   visualWrap.appendChild(visualInner);
-  visualWrap.addEventListener('click', () => chrome.runtime.openOptionsPage());
+  visualWrap.addEventListener('mousedown', () => chrome.runtime.openOptionsPage());
   upZone.appendChild(visualWrap);
 
   widget.appendChild(upZone);
@@ -272,7 +373,7 @@ function renderWidget() {
   waterBtn.className = `timer-btn water${appState.pendingWater ? ' due' : ''}`;
   waterBtn.title     = appState.pendingWater ? 'Mark as done' : 'Drink now & reset timer';
   waterBtn.innerHTML = waterBtnHTML(iconH);
-  waterBtn.addEventListener('click', async () => {
+  waterBtn.addEventListener('mousedown', async () => {
     const type = appState.pendingWater ? 'WATER_DONE' : 'DRINK_NOW';
     const res = await sendMsg({ type });
     if (res) { appState = res.state; render(); }
@@ -283,7 +384,7 @@ function renderWidget() {
   stretchBtn.className = `timer-btn stretch${appState.pendingStretch ? ' due' : ''}`;
   stretchBtn.title     = appState.pendingStretch ? 'Mark as done' : 'Move now & reset timer';
   stretchBtn.innerHTML = stretchBtnHTML(iconH);
-  stretchBtn.addEventListener('click', async () => {
+  stretchBtn.addEventListener('mousedown', async () => {
     const type = appState.pendingStretch ? 'STRETCH_DONE' : 'MOVE_NOW';
     const res = await sendMsg({ type });
     if (res) { appState = res.state; render(); }
@@ -317,6 +418,12 @@ window.addEventListener('message', e => {
     window.parent.postMessage({ type: 'AQUAPAUSE_PONG' }, '*');
   if (e.data?.type === 'AQUAPAUSE_SYNC') {
     chrome.storage.local.get(null, data => { appState = data; render(); });
+  }
+  // Content.js confirmed the dismiss — revert to normal widget
+  if (e.data?.type === 'AQUAPAUSE_INTRUSIVE_DISMISSED') {
+    renderWidget();
+    startCountdownTimer();
+    notifySize();
   }
 });
 
